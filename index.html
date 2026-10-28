@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Treino da Defesa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: uma coluna estreita como um cartão de estudo; o cartão é o único objeto destacado, o resto é texto e controles leves */
+:root{
+  --bg:#EEF2F7; --surface:#FFFFFF; --ink:#13213A; --muted:#566782; --line:#D3DCE8;
+  --accent:#0D6E8C; --accent-ink:#FFFFFF; --soft:#DCEEF4;
+  --ok:#2F7D4F; --mid:#B5791D; --bad:#B03A3A;
+  --display:'Fraunces', Georgia, serif; --body:'Atkinson Hyperlegible', system-ui, sans-serif; --mono:'JetBrains Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1726; --surface:#16233A; --ink:#E7EEF7; --muted:#9DB0C8; --line:#2A3B57;
+  --accent:#4CC3E0; --accent-ink:#0B1A2C; --soft:#173A4A; --ok:#5FC28A; --mid:#E1A64A; --bad:#E57373; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1726; --surface:#16233A; --ink:#E7EEF7; --muted:#9DB0C8; --line:#2A3B57;
+  --accent:#4CC3E0; --accent-ink:#0B1A2C; --soft:#173A4A; --ok:#5FC28A; --mid:#E1A64A; --bad:#E57373; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,6vw,42px);line-height:1.1;margin:0;text-wrap:balance}
+.count{font-family:var(--mono);font-size:15px;color:var(--muted)}
+.count b{color:var(--ink);font-size:20px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:15px;padding:8px 14px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-top:3px solid var(--line)}
+.stat span{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.stat b{font-family:var(--mono);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.c1{border-color:var(--bad)}.stat.c2{border-color:var(--mid)}.stat.c3{border-color:var(--accent)}.stat.c4{border-color:var(--ok)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 10px 30px -18px rgba(10,30,60,.35)}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--soft);color:var(--ink)}
+.q{font-family:var(--display);font-weight:500;font-size:clamp(21px,4.4vw,26px);line-height:1.3;margin:0;text-wrap:balance}
+.hint{color:var(--muted);font-size:15px;margin:0}
+.keys{display:flex;flex-wrap:wrap;gap:8px}
+.key{font-family:var(--mono);font-size:14px;padding:5px 10px;border-radius:8px;border:1px dashed var(--accent);color:var(--ink)}
+.ans{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:12px}
+.ans p{margin:0;max-width:62ch}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-size:16px;font-weight:700;padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;flex:1 1 140px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}.btn.mid{border-color:var(--mid);color:var(--mid)}.btn.ok{border-color:var(--ok);color:var(--ok)}
+.done{text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.done h2{font-family:var(--display);margin:0;font-size:26px}
+.plan{display:flex;flex-direction:column;gap:10px}
+.plan h2,.how h2{font-family:var(--display);font-size:22px;margin:0}
+.plan ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.how{font-size:15px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.how p{margin:0}
+.timer{font-family:var(--mono);font-size:15px;color:var(--muted)}
+.small{font-size:14px;color:var(--muted)}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:14px;cursor:pointer;padding:0;align-self:flex-start}
+@media (max-width:460px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Defesa de mestrado · UFPel</span>
+    <h1>Treino da Defesa</h1>
+    <span class="count" id="count"></span>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Modos de treino">
+    <button class="tab" role="tab" id="t-dia" aria-selected="true">Treino do dia</button>
+    <button class="tab" role="tab" id="t-rapido" aria-selected="false">Rajada de 5 min</button>
+    <button class="tab" role="tab" id="t-numeros" aria-selected="false">Números-chave</button>
+    <button class="tab" role="tab" id="t-plano" aria-selected="false">Plano até 15/12</button>
+  </nav>
+
+  <section class="stats" aria-label="Caixas de revisão">
+    <div class="stat c1"><span>Caixa 1 · todo dia</span><b id="b1">0</b></div>
+    <div class="stat c2"><span>Caixa 2 · 2 dias</span><b id="b2">0</b></div>
+    <div class="stat c3"><span>Caixa 3 · 4 dias</span><b id="b3">0</b></div>
+    <div class="stat c4"><span>Caixa 4 · 8 dias</span><b id="b4">0</b></div>
+  </section>
+
+  <main id="stage"></main>
+
+  <section class="how">
+    <p><b>Como usar:</b> leia a pergunta e responda em voz alta, com as palavras-chave, antes de virar o cartão. Depois marque com sinceridade.</p>
+    <p>Cada dia entram até 12 perguntas novas, junto com as revisões. Em 4 dias você já viu todas.</p>
+    <p><b>Errei</b> volta para a caixa 1 (revê amanhã). <b>Quase</b> fica onde está. <b>Acertei</b> sobe uma caixa e aparece cada vez mais espaçado. Seu progresso fica salvo neste navegador.</p>
+  </section>
+</div>
+
+<script>
+const CARDS=[
+// Fundamentos
+["Fundamentos","Por que a distribuição angular é 1 + cos²θ*?",["bóson vetorial spin 1","helicidade conservada","projeção ±1"],"Porque o bóson intermediário é vetorial (spin 1). Com férmions sem massa, a helicidade se conserva no vértice, e o par sai com projeção de spin ±1 no eixo do feixe. Isso dá esse padrão angular."],
+["Fundamentos","De onde vem o fator 1/9 na seção de choque partônica?",["3 × 3 cores","só cor-anticor aniquila","fator 1/3"],"Da média sobre as cores: são 3 × 3 = 9 combinações iniciais, e só as de cor e anticor opostas aniquilam. O resultado é um fator 1/3 em relação ao processo sem cor, que aparece como 4πα²e_q²/(9ŝ)."],
+["Fundamentos","O que diz o teorema de fatorização e quando ele vale?",["curta × longa distância","provado p/ DY inclusivo","quebra na difração pp"],"Ele separa a parte de curta distância, calculável em perturbação, da parte de longa distância, que são as PDFs. Foi demonstrado para o Drell-Yan inclusivo (Collins, Soper e Sterman). Na difração hádron-hádron ele não vale, e é por isso que existe o S²."],
+["Fundamentos","O que é o Pomeron?",["números quânticos do vácuo","trajetória de Regge","glúons em singleto de cor"],"É a troca com os números quânticos do vácuo, sem cor e sem carga, descrita por uma trajetória de Regge. Na QCD, pode ser pensado como uma troca de glúons em estado singleto de cor."],
+["Fundamentos","Por que surge a lacuna de rapidez?",["troca singleto de cor","sem radiação","Δη ≈ ln(1/ξ)"],"Porque a troca é singleto de cor. Sem cor trocada, não há radiação entre o próton intacto e o sistema produzido. A largura da lacuna é aproximadamente ln(1/ξ)."],
+["Fundamentos","Por que a fatorização difrativa vale no HERA e quebra no Tevatron e no LHC?",["fóton pontual","sem remanescentes no HERA","reespalhamento em pp"],"No HERA, o fóton virtual que sonda o próton é pontual e não tem remanescentes. Em colisões pp, os remanescentes dos dois prótons podem interagir de novo e preencher a lacuna."],
+["Fundamentos","O que é a evolução DGLAP?",["PDF muda com μ²","emissão de glúons","ajusta e evolui até M²"],"São as equações que dão como as PDFs mudam com a escala μ² por emissão de glúons e criação de pares. Por isso as PDFs são ajustadas numa escala e depois evoluídas para M² do processo."],
+// Metodologia
+["Metodologia","Por que o PYTHIA 8 e não outro gerador?",["difração dura (Ingelman-Schlein)","veto dinâmico de S²","Rasmussen e Sjöstrand"],"Porque ele tem implementados a difração dura no formalismo de Ingelman-Schlein e o veto dinâmico de sobrevivência (Rasmussen e Sjöstrand). Isso permite obter o S² dentro do próprio gerador."],
+["Metodologia","Por que a CT18NLO?",["ajuste global recente","incerteza Hessiana","alternativas: NNPDF4.0, MSHT20"],"É um ajuste global recente, com incertezas Hessianas, o que permite a reponderação. Outras opções seriam a NNPDF4.0 ou a MSHT20."],
+["Metodologia","Por que reponderar em vez de gerar uma amostra por membro da PDF?",["59 amostras seria caro","cinemática igual","só muda o peso"],"Pelo custo computacional: seriam 59 amostras. A reponderação é válida porque a cinemática do evento não muda, só o peso."],
+["Metodologia","Por que dividir a incerteza por 1,645?",["CT18 a 90% CL","gaussiana","converte para 68%"],"A CT18 fornece a incerteza a 90% de confiança. Supondo distribuição gaussiana, dividir por 1,645 converte para 68%."],
+["Metodologia","O que é o tune Monash?",["parâmetros padrão do PYTHIA 8","LEP, Tevatron, LHC","NNPDF2.3 LO"],"É o conjunto padrão de parâmetros do PYTHIA 8 (chuveiro, MPI, hadronização), ajustado a dados do LEP, do Tevatron e do LHC com a PDF NNPDF2.3 LO."],
+["Metodologia","Por que múons?",["bem medidos","menos FSR que elétrons","dados do CMS em múons"],"Porque são bem medidos e têm menos radiação de estado final que os elétrons. Além disso, as medidas do CMS usadas na comparação são no canal de múons."],
+["Metodologia","O que são léptons vestidos?",["soma fótons em ΔR < 0,1","reduz efeito da FSR","definição dos experimentos"],"São léptons aos quais se somam os fótons emitidos num cone ΔR < 0,1. Isso reduz a dependência da radiação de estado final e é a definição usada pelos experimentos."],
+["Metodologia","Por que o referencial de Collins-Soper?",["eixo simétrico entre os prótons","reduz efeito do p_T do par"],"Porque ele define o eixo polar de forma simétrica em relação aos dois prótons. Assim, reduz a ambiguidade causada pelo momento transverso do par."],
+["Metodologia","Por que duas regiões de massa?",["peak: Z domina","low: fóton domina","x menor"],"No peak domina o Z. Na região low domina o fóton e x é menor, o que testa as PDFs em outra região."],
+["Metodologia","Por que não usou a CT18NLO também no chuveiro e nas MPI?",["tune feito com NNPDF2.3 LO","trocar desajusta","S² 0,055 → 0,25"],"Porque o tune Monash foi ajustado com a NNPDF2.3 LO, e trocar a PDF nas MPI desajusta o modelo. O teste de robustez mostra isso: com a PDF NNLO em todo o evento, S² vai de 0,055 para 0,25. Usar a CT18NLO em todo o evento exigiria um novo tune."],
+// Resultados
+["Resultados","Por que a normalização fica 16 a 19% abaixo dos dados?",["processo duro em LO","NLO/NNLO somam ~20-30%","separei forma e normalização (k̂)"],"Porque o PYTHIA calcula o processo duro em ordem dominante. As correções NLO e NNLO do Drell-Yan aumentam a seção de choque em cerca de 20 a 30% no pico do Z. O chuveiro corrige a forma, mas não a normalização. Por isso separei forma e normalização com o parâmetro k-chapéu."],
+["Resultados","Por que o χ² do momento transverso é alto?",["incerteza experimental ~1%","espectro simulado mais duro","ATLAS e CMS iguais → chuveiro"],"Porque as incertezas experimentais são de cerca de 1%, e o espectro simulado é alguns por cento mais duro. O padrão aparece no ATLAS e no CMS, então vem da modelagem do chuveiro e do momento transverso intrínseco. Um tune dedicado, como o AZ do ATLAS, reduziria a diferença."],
+["Resultados","Por que a incerteza de PDF é tão pequena no pico?",["x ≈ 7 × 10⁻³","região bem medida","cresce onde x ~ 10⁻⁵"],"Porque, em rapidez central no pico do Z, x é cerca de 7 × 10⁻³, uma região muito bem vinculada pelos dados do HERA e do próprio LHC. A banda só cresce onde x chega a 10⁻⁵."],
+["Resultados","Por que o p_T difrativo é mais estreito?",["menos energia no sistema Pomeron-próton","menos espaço de fase p/ ISR"],"Porque a energia disponível no sistema Pomeron-próton é menor que na colisão pp completa. Com isso, há menos espaço de fase para radiação de estado inicial."],
+["Resultados","O que determina a razão inclusivo/difrativo ≈ 10 sem S²?",["fluxo de Pomeron","PDF difrativa","fração do conteúdo do próton"],"O fluxo de Pomeron e a PDF difrativa. O conteúdo partônico difrativo é só uma fração do conteúdo total do próton."],
+["Resultados","Variar MPI ligado e desligado não dá o S²?",["não","só mexe no subsistema Pomeron-próton","S² = sampleType 4 / 3"],"Não. Nas amostras sem veto, a chave de MPI controla só as interações dentro do subsistema Pomeron-próton. O S² vem do veto aplicado à colisão pp completa, pela razão entre sampleType 4 e 3."],
+["Resultados","O S² de 0,054 é compatível com a literatura?",["modelos eiconais: 10⁻² a 10⁻¹","está na faixa","modelos variam até ×3"],"Sim. Os modelos eiconais, como o de Khoze, Martin e Ryskin, preveem valores entre 10⁻² e 10⁻¹ no LHC, e o meu valor está nessa faixa. A ressalva é que modelos diferentes podem diferir por um fator de até três."],
+["Resultados","Por que o S² é maior na região de baixa massa?",["escala menor","colisões periféricas","menos MPI"],"Processos de escala menor estão associados a colisões mais periféricas, com parâmetro de impacto maior. Nessas colisões há menos interações múltiplas, e a lacuna sobrevive mais."],
+["Resultados","Por que S² diminui com a massa e com o p_T?",["escala maior → colisão central","mais MPI","lacuna sobrevive menos"],"Eventos com escala dura maior ou com mais radiação estão associados a colisões mais centrais, com parâmetro de impacto menor. Nessas colisões há mais interações múltiplas, e a lacuna sobrevive menos."],
+["Resultados","Por que S² quase não muda com a energia?",["σ total e MPI crescem devagar","0,0544 → 0,0531","~2%"],"Porque a seção de choque total e a atividade de MPI crescem lentamente com a energia. De 13 para 14 TeV, S² cai de 0,0544 para 0,0531, cerca de 2%."],
+["Resultados","Por que o S² sobe para 0,25 com a PDF NNLO em todo o evento?",["PDF entra no cálculo das MPI","NNLO: menos glúons em x pequeno","menos MPI → mais sobrevivência"],"A PDF entra no cálculo das interações múltiplas. A PDF NNLO tem menos glúons em x pequeno que a PDF LO do tune, então há menos interações e a lacuna sobrevive mais. O tune foi ajustado com a LO; por isso mantive essa PDF nas MPI."],
+["Resultados","E a diferença de um fator cinco com o CDF?",["principal incerteza de modelo","σ difrativa pode estar subestimada","nas perspectivas"],"É a principal indicação de incerteza de modelo. Ela sugere que as seções de choque difrativas absolutas podem estar subestimadas. Por isso registrei, nas perspectivas, a investigação com variações do fluxo, da PDF difrativa e dos parâmetros do veto."],
+["Resultados","Por que não aplicou o corte ξ < 0,1 nas amostras principais?",["S² não muda","σ cai até 40%","limitação declarada (6.2)"],"O corte foi quantificado nos testes: não altera S², mas reduz a seção de choque difrativa em até 40% no pico. Reconheço isso como limitação na seção 6.2. O corte já está implementado no gerador."],
+["Resultados","As bandas mostram só a incerteza de PDF. E as outras?",["DPDF, fluxo e S² não propagados","provavelmente dominam","Seção 6.2"],"Reconheça diretamente: as incertezas da PDF difrativa, do fluxo e do modelo de S² não foram propagadas e provavelmente dominam. Isso está na Seção 6.2."],
+["Resultados","Por que não usar NLO?",["PYTHIA é LO no processo duro","POWHEG + PYTHIA","déficit coerente com fator K"],"O PYTHIA calcula o processo duro em ordem dominante. O caminho seria POWHEG + PYTHIA, citado nas perspectivas. O déficit de 16-19% é coerente com o fator K esperado."],
+["Resultados","Quantos eventos o experimento mediria de fato?",["números antes da aceitação","AFP/PPS: 0,02 ≲ ξ ≲ 0,15","próximo passo"],"Os números da dissertação são antes da aceitação e da eficiência dos detectores frontais. Aplicar a janela 0,02 ≲ ξ ≲ 0,15 do AFP/PPS é um dos próximos passos."],
+["Resultados","Como o experimento separaria o sinal difrativo do inclusivo?",["lacuna de rapidez (pouco pile-up)","próton marcado: AFP e PPS","HL-LHC: marcação do próton"],"Pela lacuna de rapidez, nos runs com pouco pile-up, ou pela marcação do próton intacto nos espectrômetros AFP e PPS. No HL-LHC, com pile-up de 140 a 200, a marcação do próton é o caminho mais viável."],
+["Resultados","Por que as ressonâncias Υ não aparecem na região low?",["simulação só tem γ*/Z","Υ domina 9,4-10,4 GeV","limitação declarada"],"Elas não foram incluídas na simulação, que só tem γ*/Z. Nos dados reais, elas dominam entre 9,4 e 10,4 GeV. Essa limitação está declarada na dissertação."],
+// Gerais
+["Gerais","Qual foi a sua contribuição original?",["cadeia completa","comparação com covariância","S² com PYTHIA 8.315, testes, Run 3/HL-LHC"],"A cadeia completa: simulação inclusiva e difrativa com a CT18NLO e propagação da incerteza, comparação com o ATLAS e o CMS usando a covariância completa, quantificação do S² com o PYTHIA 8.315, testes de robustez e predições para o Run 3 e o HL-LHC."],
+["Gerais","Qual foi a maior dificuldade?",["resposta sua, verdadeira","ex.: MPI não isola S²","ex.: comparação fiducial"],"Responda com a sua experiência real. Exemplos possíveis: entender que ligar e desligar o MPI não isola o S², fazer a comparação com dados no nível fiducial, ou a sensibilidade do S² à PDF."],
+["Gerais","Se tivesse mais tempo, o que faria?",["incerteza de S² (variar MPI)","cortes de aceitação AFP/PPS"],"Atribuir uma incerteza ao S² variando os parâmetros de MPI e repetir a análise com os cortes de aceitação do AFP/PPS."],
+["Gerais","E se eu não souber responder uma pergunta?",["não explorei neste trabalho","mas acredito que...","raciocínio físico honesto"],"Diga: é um ponto que não explorei neste trabalho, mas acredito que... e dê o raciocínio físico. A banca valoriza mais o raciocínio honesto do que uma resposta inventada."],
+["Gerais","Você usou inteligência artificial no trabalho?",["verdade","conforme a declaração","simulações, análise e conclusões são suas"],"Responda com a verdade e de acordo com a declaração da dissertação. Por exemplo: que usou como apoio na redação e na revisão, e que as simulações, as análises e as conclusões são suas."],
+];
+const NUMS=[
+["S² no pico do Z (13 TeV)","0,0544 ± 0,0002 (1/S² ≈ 18)"],
+["S² na região de baixa massa (13 TeV)","0,0631 ± 0,0001 (1/S² ≈ 16)"],
+["χ²/ndof da rapidez normalizada (CMS)","0,72"],
+["k̂ da massa (CMS)","1,157 ± 0,017 (χ²min/ndof = 0,93)"],
+["Déficit de normalização em LO","16 a 19%"],
+["χ²/ndof do p_T normalizado: CMS e ATLAS","3,65 e 8,94"],
+["χ²/ndof da A_FB (CMS)","2,21 (19,9 / 9)"],
+["Queda do pico do Z pela FSR","~18%"],
+["Razão inclusivo/difrativo sem S² (peak / low)","≈ 10 / ≈ 6,8"],
+["Fração de eventos difrativos com y > 0 (peak)","~68%"],
+["Eventos com ξ > 0,1 (peak / low)","40% / 23%"],
+["S² com PDF NNLO em todo o evento","0,253"],
+["Fração difrativa no Tevatron: prevista vs CDF","0,16% vs 0,88 ± 0,22%"],
+["σ difrativa com S², pico, Run 3 (13,6 TeV)","3,35 pb → ~1,0 × 10⁶ eventos (300 fb⁻¹)"],
+["σ difrativa com S², pico, HL-LHC (14 TeV)","3,41 pb → ~1,0 × 10⁷ eventos (3000 fb⁻¹)"],
+["S² no pico: 13 → 13,6 → 14 TeV","0,0544 → 0,0537 → 0,0531"],
+["Pesos por evento na reponderação","59 (central + 29 pares)"],
+["x no pico do Z em y = 0 (13 TeV)","≈ 7 × 10⁻³"],
+["Pile-up esperado no HL-LHC","140 a 200"],
+["Regiões de massa","peak 65-115 GeV · low 9-20 GeV"],
+];
+const KEY='treinoDefesa.v1', INT={1:1,2:2,3:4,4:8}, DEF=new Date(2026,11,15);
+function today(){const d=new Date();d.setHours(0,0,0,0);return d}
+function dstr(d){return d.toISOString().slice(0,10)}
+function addDays(n){const d=today();d.setDate(d.getDate()+n);return dstr(d)}
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function info(i){return state[i]||{box:1,due:dstr(today())}}
+const NEW_PER_DAY=12;
+function due(){const t=dstr(today());const all=CARDS.map((c,i)=>i);
+  const rev=all.filter(i=>state[i]&&state[i].due<=t);
+  const newToday=all.filter(i=>state[i]&&state[i].first===t).length;
+  const fresh=all.filter(i=>!state[i]).slice(0,Math.max(0,NEW_PER_DAY-newToday));
+  return rev.concat(fresh)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const $=s=>document.querySelector(s), stage=$('#stage');
+function counts(){const c={1:0,2:0,3:0,4:0};CARDS.forEach((x,i)=>c[info(i).box]++);for(const k in c)$('#b'+k).textContent=c[k];
+  const days=Math.round((DEF-today())/864e5);
+  $('#count').innerHTML=days>0?`Faltam <b>${days}</b> dias para a defesa · ${CARDS.length} perguntas · ${due().length} para hoje`:`Hoje é o grande dia. Você se preparou.`}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+let queue=[], mode='dia', t0=0, tick=null;
+function cardView(i,{showKeys=true,sub=''}={}){
+  const [cat,q,keys,a]=CARDS[i];
+  stage.innerHTML=`<article class="card">
+    <div class="meta"><span class="chip">${cat}</span><span>${sub}</span></div>
+    <h2 class="q">${esc(q)}</h2>
+    <p class="hint">Responda em voz alta antes de virar.</p>
+    <div class="row"><button class="btn" id="kbtn">Ver palavras-chave</button><button class="btn primary" id="flip">Virar cartão</button></div>
+    <div class="keys" id="keys" hidden>${keys.map(k=>`<span class="key">${esc(k)}</span>`).join('')}</div>
+    <div class="ans" id="ans" hidden><p>${esc(a)}</p>
+      <div class="row"><button class="btn bad" id="r1">Errei</button><button class="btn mid" id="r2">Quase</button><button class="btn ok" id="r3">Acertei</button></div></div>
+  </article>`;
+  $('#kbtn').onclick=()=>{$('#keys').hidden=false;$('#kbtn').hidden=true};
+  $('#flip').onclick=()=>{$('#keys').hidden=false;$('#ans').hidden=false;$('#flip').hidden=true;$('#kbtn').hidden=true;$('#r3').focus()};
+  const rate=r=>{const s=info(i);let b=s.box;if(r===1)b=1;else if(r===3)b=Math.min(4,b+1);
+    state[i]={box:b,due:addDays(r===1?1:INT[b]),first:(state[i]&&state[i].first)||dstr(today())};save();counts();next()};
+  $('#r1').onclick=()=>rate(1);$('#r2').onclick=()=>rate(2);$('#r3').onclick=()=>rate(3);
+}
+function next(){
+  if(mode==='rapido'&&Date.now()-t0>300000){queue=[]}
+  if(!queue.length){doneView();return}
+  const i=queue.shift();
+  const sub=mode==='rapido'?`<span class="timer" id="tm"></span>`:`${queue.length} restantes`;
+  cardView(i,{sub});updTimer();
+}
+function updTimer(){const el=$('#tm');if(!el)return;const s=Math.max(0,300-Math.floor((Date.now()-t0)/1000));el.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} restantes`}
+function doneView(){clearInterval(tick);
+  const msg=mode==='rapido'?'Rajada concluída.':'Treino de hoje concluído.';
+  stage.innerHTML=`<div class="card done"><h2>${msg}</h2><p class="small">As perguntas que você errou voltam amanhã. Agora vale ensaiar uma parte da apresentação em voz alta.</p>
+  <div class="row"><button class="btn" id="mais">Treinar mais 5 perguntas</button></div></div>`;
+  $('#mais').onclick=()=>{mode='extra';queue=shuffle(CARDS.map((c,i)=>i)).slice(0,5);next()};
+}
+function startDia(){mode='dia';queue=shuffle(due());clearInterval(tick);next()}
+function startRapido(){mode='rapido';t0=Date.now();queue=shuffle(CARDS.map((c,i)=>i));clearInterval(tick);tick=setInterval(updTimer,1000);next()}
+function numerosView(){clearInterval(tick);
+  const order=shuffle(NUMS.map((n,i)=>i));let k=0;
+  const show=()=>{if(k>=order.length){stage.innerHTML=`<div class="card done"><h2>Todos os números revisados.</h2><div class="row"><button class="btn" id="again">Recomeçar</button></div></div>`;$('#again').onclick=numerosView;return}
+    const [q,a]=NUMS[order[k]];
+    stage.innerHTML=`<article class="card"><div class="meta"><span class="chip">Número-chave</span><span>${k+1} de ${order.length}</span></div>
+      <h2 class="q">${esc(q)}</h2><p class="hint">Diga o valor antes de revelar.</p>
+      <div class="row"><button class="btn primary" id="rev">Revelar</button></div>
+      <div class="ans" id="ans" hidden><p class="key" style="align-self:flex-start;font-size:18px">${esc(a)}</p><div class="row"><button class="btn" id="nx">Próximo</button></div></div></article>`;
+    $('#rev').onclick=()=>{$('#ans').hidden=false;$('#rev').hidden=true;$('#nx').focus()};
+    $('#nx').onclick=()=>{k++;show()};};
+  show();
+}
+function planoView(){clearInterval(tick);
+  stage.innerHTML=`<section class="card plan"><h2>Rotina diária até 15 de dezembro</h2>
+  <ol>
+    <li><b>Manhã, 10 min:</b> "Treino do dia". Responda em voz alta e marque com sinceridade.</li>
+    <li><b>Durante o dia, 5 min:</b> "Rajada de 5 min" no celular, numa pausa.</li>
+    <li><b>Noite, 15 min:</b> ensaie 1 bloco da apresentação com o roteiro, cronometrando. Alterne: abertura, teoria, métodos, inclusivo, difrativo, predições e conclusões.</li>
+    <li><b>Antes de dormir, 3 min:</b> "Números-chave". O sono ajuda a fixar.</li>
+  </ol>
+  <h2>Marcos</h2>
+  <ol>
+    <li><b>Até 15/11:</b> todas as perguntas na caixa 2 ou mais.</li>
+    <li><b>Até 30/11:</b> ensaio completo de 40 minutos, cronometrado, 1 vez por semana.</li>
+    <li><b>De 1 a 10/12:</b> ensaio para alguém (colega ou orientador) fazendo perguntas desta lista.</li>
+    <li><b>De 11 a 14/12:</b> só revisão leve. Nada novo. Dormir bem.</li>
+  </ol>
+  <p class="small">Dica para fixar rápido: explique cada resposta com as 3 palavras-chave, como se contasse para alguém de fora da física. Se você consegue explicar simples, você entendeu.</p>
+  <button class="link" id="reset">Zerar meu progresso</button>
+  <p class="small" id="confirm" hidden>Tem certeza? <button class="link" id="yes">Sim, zerar</button></p>
+  </section>`;
+  $('#reset').onclick=()=>{$('#confirm').hidden=false};
+  $('#yes').onclick=()=>{state={};save();counts();$('#confirm').hidden=true;$('#reset').textContent='Progresso zerado'};
+}
+const tabs={dia:startDia,rapido:startRapido,numeros:numerosView,plano:planoView};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===b));tabs[b.id.slice(2)]()});
+counts();startDia();
+</script>
+
+</body>
+</html>
